@@ -7,3 +7,6 @@
 /gradlew
 /gradlew.bat
 /build-hex
+/.externalToolBuilders
+/.classpath
+/.project

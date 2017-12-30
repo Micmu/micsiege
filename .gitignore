@@ -1,0 +1,9 @@
+/build
+/doc
+/gradle
+/.settings
+/bin
+/build-mic.bat
+/gradlew
+/gradlew.bat
+/build-hex

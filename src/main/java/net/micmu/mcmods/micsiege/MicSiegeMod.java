@@ -25,7 +25,7 @@ public class MicSiegeMod {
     public static final String MODID = "micsiege";
     public static final String NAME = "Brutal Zombie Siege";
     public static final String VERSION = "1.0.0";
-    public static final String ACCEPTED_MINECRAFT_VERSIONS = "[1.12]";
+    public static final String ACCEPTED_MINECRAFT_VERSIONS = "[1.12,1.13)";
     public static final String CONFIG_FILE_NAME = "BrutalZombieSiege";
 
     public static final boolean IS_DEVEL_VERSION = true;

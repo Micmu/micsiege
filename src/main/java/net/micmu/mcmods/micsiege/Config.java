@@ -15,10 +15,10 @@ public class Config {
     @RangeInt(min = 0, max = 100)
     public static int chancesPerNight = 10;
 
-    @Comment("If set to true, events will not occur exactly at midnight.\nEvents might occur at any time between midnight and 3 am. Vanilla behavior is false.")
+    @Comment("If 'true', events will not occur exactly at midnight.\nEvents might occur at any time between midnight and 3 am. Vanilla behavior is false.")
     public static boolean randomizeTime = true;
 
-    @Comment("If set to true, one or more lightning bolts will strike at the spawn location.\nThis lightning doesn't do any damage.")
+    @Comment("If 'true', one or more lightning bolts will strike at the spawn location.\nThis lightning doesn't do any damage.")
     public static boolean lightningStrikes = true;
 
     @Comment("Distance from village center where zombies may spawn; multiplier of village radius.\nValue of 1.4 means the zombies will spawn at 140% of village radius away from center.\nVanilla sieges are using multiplier of 0.9.")
@@ -37,6 +37,6 @@ public class Config {
     @RangeInt(min = 1, max = 300)
     public static int zombieSpawnCount = 20;
 
-    @Comment("If set to true, spawned zombies will not despawn until killed.\nThis option is useful if you are using large 'villageDistanceMultiplier'.")
+    @Comment("If 'true', spawned zombies will not despawn until killed.\nThis option is useful if you are using large 'villageDistanceMultiplier'.")
     public static boolean zombiePreventDespawn = false;
 }

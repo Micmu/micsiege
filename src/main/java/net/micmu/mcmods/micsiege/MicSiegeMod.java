@@ -28,8 +28,6 @@ public class MicSiegeMod {
     public static final String ACCEPTED_MINECRAFT_VERSIONS = "[1.12,1.13)";
     public static final String CONFIG_FILE_NAME = "BrutalZombieSiege";
 
-    public static final boolean IS_DEVEL_VERSION = true;
-
     public static final Logger LOG = LogManager.getLogger(MODID);
 
     @Mod.Instance(MODID)

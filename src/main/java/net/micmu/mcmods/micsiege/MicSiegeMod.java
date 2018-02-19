@@ -41,7 +41,7 @@ public class MicSiegeMod {
     public static void onWorldLoad(WorldEvent.Load event) {
         final World world = event.getWorld();
         if (!world.isRemote && (world instanceof WorldServer))
-            SiegeCore.getInstance().setupWorld((WorldServer)world);
+            SiegeCore.getInstance().initializeWorld((WorldServer)world);
     }
 
     /**

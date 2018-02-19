@@ -20,11 +20,12 @@ final class VillageSiegeManager extends VillageSiege {
     /**
      *
      * @param world
+     * @param sieges
      */
-    VillageSiegeManager(World world) {
+    VillageSiegeManager(World world, SiegeAIBase[] sieges) {
         super(null);
         this.world = world;
-        this.sieges = new SiegeAIBase[] { new SiegeZombies() };
+        this.sieges = sieges;
         this.tick = 100 + world.rand.nextInt(150);
     }
 

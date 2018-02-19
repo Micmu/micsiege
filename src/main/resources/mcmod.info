@@ -2,7 +2,7 @@
 {
   "modid": "micsiege",
   "name": "Brutal Zombie Siege",
-  "description": "Improves the horribly flawed vanilla Zombie Siege mechanic, adjustable parameters.",
+  "description": "Replaces the flawed vanilla Zombie Siege mechanic with improved and adjustable version (see in-game mod Config).",
   "version": "${version}",
   "mcversion": "1.12",
   "url": "https://www.curseforge.com/minecraft/mc-mods/brutal-zombie-siege",

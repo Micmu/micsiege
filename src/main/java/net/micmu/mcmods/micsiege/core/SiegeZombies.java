@@ -41,6 +41,15 @@ public class SiegeZombies extends SiegeAIBase {
      *
      */
     @Override
+    protected boolean onInitializeWorld() {
+        int d = getWorld().provider.getDimension();
+        return (d != -1) && (d != 1); // No Zombie Siege in Nether and End
+    }
+
+    /**
+     *
+     */
+    @Override
     protected void onStop() {
         siegePos = null;
         huskCache = null;
@@ -138,12 +147,10 @@ public class SiegeZombies extends SiegeAIBase {
     @Override
     protected void tick() {
         EntityZombie z;
-        int r = getRNG().nextInt(100);
-        if ((r < 20) && (r >= 10)) {
-            // Spawns Zombie Villagers also
+        int c = Config.zombieVillagerChance;
+        if ((c > 0) && ((c >= 100) || (c > getRNG().nextInt(100)))) {
             z = new EntityZombieVillager(getWorld());
-        } else if ((r >= 50) && isHuskBiome()) {
-            // In a desert, spawn husks also
+        } else if (isHuskBiome() && getRNG().nextBoolean()) {
             z = new EntityHusk(getWorld());
         } else {
             z = new EntityZombie(getWorld());

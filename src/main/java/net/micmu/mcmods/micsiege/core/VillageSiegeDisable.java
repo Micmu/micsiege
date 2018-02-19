@@ -20,6 +20,6 @@ final class VillageSiegeDisable extends VillageSiege {
      */
     @Override
     public void tick() {
-        // Sieges are disabled. Do NOTHING.
+        // Sieges are disabled. Do nothing.
     }
 }

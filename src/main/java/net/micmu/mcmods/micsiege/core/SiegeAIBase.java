@@ -107,14 +107,6 @@ public abstract class SiegeAIBase {
 
     /**
      *
-     * @return
-     */
-    protected String getUnlocalizedName() {
-        return "micvillage.siege.start";
-    }
-
-    /**
-     *
      * @param precise
      * @return
      */
@@ -141,6 +133,14 @@ public abstract class SiegeAIBase {
      *
      */
     protected void onCheck() {
+    }
+
+    /**
+     *
+     * @return
+     */
+    protected boolean onInitializeWorld() {
+        return true;
     }
 
     /**

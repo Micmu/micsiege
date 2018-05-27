@@ -50,7 +50,7 @@ public abstract class SiegeAIBase {
     private String villageName;
     private boolean exceptFlag = false;
     private int tickCount;
-    private long lastLightning = 0L;
+    private long nextLigtning = -1L;
 
     /**
      *
@@ -82,7 +82,7 @@ public abstract class SiegeAIBase {
         exceptFlag = false;
         spawnCount = 0;
         tickCount = 0;
-        lastLightning = 0L;
+        nextLigtning = -1L;
     }
 
     /**
@@ -273,11 +273,13 @@ public abstract class SiegeAIBase {
             return false;
         try {
             creature.setLocationAndAngles(pos.x, pos.y, pos.z, getRNG().nextFloat() * 360.0F, 0.0F);
+            creature.onInitialSpawn(world.getDifficultyForLocation(new BlockPos(creature)), (IEntityLivingData)null);
             if (creature instanceof EntityZombie) {
-                // Entity is a zombie (yay!). Setup it.
-                ((EntityZombie)creature).onInitialSpawn(world.getDifficultyForLocation(new BlockPos(creature)), (IEntityLivingData)null);
+                // Prevent zombies breaking doors
+                if (Config.zombiePreventBreakDoors && ((EntityZombie)creature).isBreakDoorsTaskSet())
+                    ((EntityZombie)creature).setBreakDoorsAItask(false);
+                // Setup random profession for Zombie Villagers
                 if (creature instanceof EntityZombieVillager) {
-                    // Setup random profession for Zombie Villager
                     VillagerProfession p = getRandomVillagerProfession();
                     if (p != null)
                         ((EntityZombieVillager)creature).setForgeProfession(p);
@@ -289,6 +291,8 @@ public abstract class SiegeAIBase {
                     creature.enablePersistence();
                 Village v = getVillage();
                 if (v != null) {
+                    // Make them move towards the village
+                    creature.setHomePosAndDistance(v.getCenter(), v.getVillageRadius());
                     // Setup homing AI if not present, so it will move towards the village.
                     // Zombies already have it, so don't check for them.
                     if (!(creature instanceof EntityZombie)) {
@@ -302,13 +306,12 @@ public abstract class SiegeAIBase {
                         if (needsHoming)
                             creature.tasks.addTask(5, new EntityAIMoveTowardsRestriction(creature, 1.0D));
                     }
-                    // Make them move towards the village
-                    creature.setHomePosAndDistance(v.getCenter(), v.getVillageRadius());
                 }
                 if (Config.lightningStrikes) {
+                    // Make kaboom every now and then
                     long now = world.getTotalWorldTime();
-                    if (Math.abs(now - lastLightning) >= 20L) {
-                        lastLightning = now;
+                    if (now >= nextLigtning) {
+                        nextLigtning = now + (long)(19 + getRNG().nextInt(12));
                         world.addWeatherEffect(new EntityLightningBolt(getWorld(), pos.x, pos.y, pos.z, true));
                     }
                 }
@@ -317,7 +320,7 @@ public abstract class SiegeAIBase {
         } catch (Exception ex) {
             if (!exceptFlag) {
                 exceptFlag = true;
-                MicSiegeMod.LOG.error("Failed to spawn siege creature", ex);
+                MicSiegeMod.LOG.error("Failed to spawn siege mob", ex);
             }
         }
         return false;

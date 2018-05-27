@@ -40,6 +40,9 @@ public class Config {
     @Comment("If 'true', spawned zombies will not despawn until killed.\nThis option is useful if you are using large 'villageDistanceMultiplier'.")
     public static boolean zombiePreventDespawn = false;
 
+    @Comment("If 'true', spawned zombies will not be able to break doors.\nThis option will prevent siege Zombies breaking wooden doors on Hard difficulty.\nOption has no effect on regular Zombies.")
+    public static boolean zombiePreventBreakDoors = false;
+
     @Comment("Chance for a Zombie Villager to spawn instead of a regular one (percentage).\nValue for vanilla sieges is 0.")
     @RangeInt(min = 0, max = 100)
     public static int zombieVillagerChance = 5;

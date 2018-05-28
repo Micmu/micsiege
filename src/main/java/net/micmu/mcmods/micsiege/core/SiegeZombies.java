@@ -1,9 +1,11 @@
 package net.micmu.mcmods.micsiege.core;
 
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityHusk;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.monster.EntityZombieVillager;
@@ -17,8 +19,6 @@ import net.minecraft.village.VillageDoorInfo;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldEntitySpawner;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeDesert;
-import net.minecraft.world.biome.BiomeMesa;
 
 import net.micmu.mcmods.micsiege.Config;
 
@@ -164,8 +164,17 @@ public class SiegeZombies extends SiegeAIBase {
      */
     private boolean isHuskBiome() {
         if (huskCache == null) {
-            Biome b = getWorld().getBiome(siegePos);
-            huskCache = Boolean.valueOf((b instanceof BiomeDesert) || (b instanceof BiomeMesa));
+            boolean f = false;
+            List<Biome.SpawnListEntry> spawns = getWorld().getBiome(siegePos).getSpawnableList(EnumCreatureType.MONSTER);
+            if ((spawns != null) && !spawns.isEmpty()) {
+                for (Biome.SpawnListEntry e : spawns) {
+                    if (EntityHusk.class.isAssignableFrom(e.entityClass)) {
+                        f = true;
+                        break;
+                    }
+                }
+            }
+            huskCache = Boolean.valueOf(f);
         }
         return huskCache.booleanValue();
     }

@@ -95,25 +95,25 @@ public class SiegeZombies extends SiegeAIBase {
         Village village = null;
         BlockPos center;
         float f;
-        float q;
+        float a;
         boolean b;
         int i;
         int r;
-        double radius = Config.villageDistanceMultiplier + (0.5D - (0.1D * rnd.nextDouble()));
-        if (radius < 0.1D)
-            radius = 0.1D;
-        else if (radius > 1.9D)
-            radius = 1.9D;
+        float multi = (float)Config.villageDistanceMultiplier + 0.1F - (0.2F * rnd.nextFloat());
+        if (multi < 0.1F)
+            multi = 0.1F;
+        else if (multi > 1.9F)
+            multi = 1.9F;
         for (EntityPlayer player : getRandomizedPlayers()) {
             m.setPos(MathHelper.floor(player.posX), MathHelper.floor(player.posY), MathHelper.floor(player.posZ));
             village = villageCol.getNearestVillage(m, 1);
             if ((village != null) && isValidVillage(village)) {
                 center = village.getCenter();
-                f = (float)village.getVillageRadius();
+                f = (float)village.getVillageRadius() * multi;
                 b = false;
                 for (i = 0; i < 10; i++) {
-                    q = rnd.nextFloat() * ((float)Math.PI * 2.0F);
-                    spawn.setPos(center.getX() + (int)((double)(MathHelper.cos(q) * f) * radius), center.getY(), center.getZ() + (int)((double)(MathHelper.sin(q) * f) * radius));
+                    a = rnd.nextFloat() * ((float)Math.PI * 2.0F);
+                    spawn.setPos(center.getX() + (int)(MathHelper.cos(a) * f), center.getY(), center.getZ() + (int)(MathHelper.sin(a) * f));
                     b = false;
                     for (Village vx : villageCol.getVillageList()) {
                         if ((vx != village) && !vx.isAnnihilated()) {
@@ -227,8 +227,8 @@ public class SiegeZombies extends SiegeAIBase {
         int i = village.getVillageRadius();
         double r = (double)(4 * i * i);
         Block b;
-        for (i = 0; i < 40; i++) {
-            m.setPos(pos.getX() + rnd.nextInt(16) - 8, pos.getY() + rnd.nextInt(10) - 5, pos.getZ() + rnd.nextInt(16) - 8);
+        for (i = 0; i < 45; i++) {
+            m.setPos(pos.getX() + rnd.nextInt(17) - 8, pos.getY() + rnd.nextInt(11) - 5, pos.getZ() + rnd.nextInt(17) - 8);
             if ((m.distanceSq(center) < r) && world.isBlockLoaded(m, false)) {
                 b = world.getBlockState(m).getBlock();
                 if (b.isPassable(world, m) && WorldEntitySpawner.canCreatureTypeSpawnAtLocation(EntityLiving.SpawnPlacementType.ON_GROUND, world, m))

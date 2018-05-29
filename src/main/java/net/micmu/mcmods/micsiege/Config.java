@@ -21,9 +21,9 @@ public class Config {
     @Comment("If 'true', one or more lightning bolts will strike at the spawn location.\nThis lightning doesn't do any damage.")
     public static boolean lightningStrikes = true;
 
-    @Comment("Distance from village center where zombies may spawn; multiplier of village radius.\nValue of 1.4 means the zombies will spawn at 140% of village radius away from center.\nVanilla sieges are using multiplier of 0.9.")
+    @Comment("Distance from village center where zombies may spawn; multiplier of village radius.\nValue of 1.5 means the zombies will spawn at 150% of village radius away from center.\nVanilla sieges are using multiplier of 0.9.")
     @RangeDouble(min = 0.2D, max = 1.9D)
-    public static double villageDistanceMultiplier = 1.4D;
+    public static double villageDistanceMultiplier = 1.5D;
 
     @Comment("Minimum number of village doors required for the event to occur.\nValue for vanilla sieges is 10.")
     @RangeInt(min = 1, max = 200)

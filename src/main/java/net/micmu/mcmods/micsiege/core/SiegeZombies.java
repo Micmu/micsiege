@@ -1,5 +1,6 @@
 package net.micmu.mcmods.micsiege.core;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -92,7 +93,7 @@ public class SiegeZombies extends SiegeAIBase {
         final VillageCollection villageCol = getWorld().getVillageCollection();
         final Random rnd = getRNG();
         final SiegeCore core = SiegeCore.getInstance();
-        Village village = null;
+        Village village = isForced() ? getVillage() : null;
         BlockPos center;
         float f;
         float a;
@@ -104,10 +105,22 @@ public class SiegeZombies extends SiegeAIBase {
             multi = 0.1F;
         else if (multi > 1.9F)
             multi = 1.9F;
-        for (EntityPlayer player : getRandomizedPlayers()) {
-            m.setPos(MathHelper.floor(player.posX), MathHelper.floor(player.posY), MathHelper.floor(player.posZ));
-            village = villageCol.getNearestVillage(m, 1);
-            if ((village != null) && isValidVillage(village)) {
+        boolean forced;
+        List<EntityPlayer> players;
+        if (village != null) {
+            // Force siege now
+            players = Collections.singletonList(null);
+            forced = true;
+        } else {
+            players = getRandomizedPlayers();
+            forced = false;
+        }
+        for (EntityPlayer player : players) {
+            if (player != null) {
+                m.setPos(MathHelper.floor(player.posX), MathHelper.floor(player.posY), MathHelper.floor(player.posZ));
+                village = villageCol.getNearestVillage(m, 1);
+            }
+            if ((village != null) && (forced || isValidVillage(village))) {
                 center = village.getCenter();
                 f = (float)village.getVillageRadius() * multi;
                 b = false;

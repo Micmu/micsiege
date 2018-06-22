@@ -47,8 +47,8 @@ public abstract class SiegeAIBase {
     private int spawnCount;
     private World world;
     private Village village;
-    private String villageName;
     private boolean exceptFlag = false;
+    private boolean forced = false;
     private int tickCount;
     private long nextLigtning = -1L;
 
@@ -58,7 +58,10 @@ public abstract class SiegeAIBase {
      */
     boolean startTick() {
         onCheck();
-        if (checkDaytime(false)) {
+        if (isForced() && tryStart()) {
+            checkStage = 3;
+            return true;
+        } else if (checkDaytime(false)) {
             if ((checkStage == 0) && checkDaytime(true))
                 checkStage = checkChance() ? 1 : 2;
             if ((checkStage == 1) && tryStart()) {
@@ -66,10 +69,9 @@ public abstract class SiegeAIBase {
                 return true;
             }
             return false;
-        } else {
-            checkStage = 0;
-            return false;
         }
+        checkStage = 0;
+        return false;
     }
 
     /**
@@ -77,8 +79,8 @@ public abstract class SiegeAIBase {
      */
     void resetTick() {
         world = null;
+        forced = false;
         village = null;
-        villageName = null;
         exceptFlag = false;
         spawnCount = 0;
         tickCount = 0;
@@ -199,6 +201,22 @@ public abstract class SiegeAIBase {
      *
      * @return
      */
+    boolean isForced() {
+        return forced;
+    }
+
+    /**
+     *
+     * @param forced
+     */
+    public void setForced(boolean forced) {
+        this.forced = forced;
+    }
+
+    /**
+     *
+     * @return
+     */
     public Village getVillage() {
         return village;
     }
@@ -210,7 +228,6 @@ public abstract class SiegeAIBase {
     protected void setVillage(Village village) {
         if (village != this.village) {
             this.village = village;
-            this.villageName = null;
         }
     }
 

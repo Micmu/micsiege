@@ -8,7 +8,10 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.Village;
 import net.minecraft.village.VillageSiege;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
@@ -64,13 +67,10 @@ public class SiegeCore {
      */
     public boolean initializeWorld(@Nonnull WorldServer world) {
         final int dimension = world.provider.getDimension();
+        final Field f = getSiegeField();
+        if (f == null)
+            return false;
         try {
-            Field f = this.injectField;
-            if (f == null) {
-                f = ReflectionHelper.findField(WorldServer.class, "field_175740_d", "villageSiege");
-                f.setAccessible(true);
-                this.injectField = f;
-            }
             VillageSiege siege = (VillageSiege)f.get(world);
             List<SiegeAIBase> handlers = createSiegeHandlers(world);
             if (handlers.isEmpty()) {
@@ -102,14 +102,74 @@ public class SiegeCore {
                 return true;
             }
         } catch (Throwable t) {
-            this.injectField = null;
-            if (!exceptionDumped) {
-                exceptionDumped = true;
-                MicSiegeMod.LOG.error("Minecraft/Forge/other mod compatiblitiy issue?", t);
-            }
-            MicSiegeMod.LOG.error("*** Failed to set up Zombie Siege mechanics! Enchanced Zombie Siege mechanics will not work! ***");
+            reflectionFail(t);
         }
         return false;
+    }
+
+    /**
+     *
+     * @param world
+     * @param pos
+     * @return
+     */
+    public int triggerSiegeNow(@Nonnull World world, @Nonnull BlockPos pos) {
+        final VillageSiegeManager manager = (world instanceof WorldServer) ? getManager((WorldServer)world) : null;
+        if (manager == null)
+            return 0;
+        final Village village = world.getVillageCollection().getNearestVillage(pos, 32);
+        if ((village == null) || village.isAnnihilated())
+            return -1;
+        return manager.triggerSiege(village);
+    }
+
+    /**
+     *
+     * @param world
+     * @return
+     */
+    private VillageSiegeManager getManager(@Nonnull WorldServer world) {
+        Field f = getSiegeField();
+        if (f != null) {
+            try {
+                VillageSiege siege = (VillageSiege)f.get(world);
+                if (siege instanceof VillageSiegeManager)
+                    return (VillageSiegeManager)siege;
+            } catch (Throwable t) {
+                reflectionFail(t);
+            }
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @return
+     */
+    private Field getSiegeField() {
+        Field f = this.injectField;
+        if (f == null) {
+            try {
+                this.injectField = f = ReflectionHelper.findField(WorldServer.class, "field_175740_d", "villageSiege");
+            } catch (Throwable t) {
+                reflectionFail(t);
+                return null;
+            }
+        }
+        return f;
+    }
+
+    /**
+     *
+     * @param t
+     */
+    private void reflectionFail(Throwable t) {
+        this.injectField = null;
+        if (!exceptionDumped) {
+            exceptionDumped = true;
+            MicSiegeMod.LOG.error("Minecraft/Forge/other mod compatiblitiy issue?", t);
+        }
+        MicSiegeMod.LOG.error("*** Failed to set up Zombie Siege mechanics! Enchanced Zombie Siege mechanics will not work! ***");
     }
 
     /**

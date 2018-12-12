@@ -17,6 +17,7 @@ import net.minecraft.entity.ai.EntityAITasks;
 import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.monster.EntityZombieVillager;
+import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.ResourceLocation;
@@ -47,7 +48,7 @@ public abstract class SiegeAIBase {
     private int spawnCount;
     private World world;
     private Village village;
-    private boolean exceptFlag = false;
+    private boolean spawnFailFlag = false;
     private boolean forced = false;
     private int tickCount;
     private long nextLigtning = -1L;
@@ -81,7 +82,7 @@ public abstract class SiegeAIBase {
         world = null;
         forced = false;
         village = null;
-        exceptFlag = false;
+        spawnFailFlag = false;
         spawnCount = 0;
         tickCount = 0;
         nextLigtning = -1L;
@@ -292,19 +293,24 @@ public abstract class SiegeAIBase {
             creature.setLocationAndAngles(pos.x, pos.y, pos.z, getRNG().nextFloat() * 360.0F, 0.0F);
             creature.onInitialSpawn(world.getDifficultyForLocation(new BlockPos(creature)), (IEntityLivingData)null);
             if (creature instanceof EntityZombie) {
-                // Prevent zombies breaking doors
+                // Prevent zombies breaking doors.
                 if (Config.zombiePreventBreakDoors && ((EntityZombie)creature).isBreakDoorsTaskSet())
                     ((EntityZombie)creature).setBreakDoorsAItask(false);
-                // Setup random profession for Zombie Villagers
+                // Setup random profession for Zombie Villagers.
                 if (creature instanceof EntityZombieVillager) {
                     VillagerProfession p = getRandomVillagerProfession();
                     if (p != null)
                         ((EntityZombieVillager)creature).setForgeProfession(p);
                 }
+            } else if (creature instanceof EntityVillager) {
+                // Someone is spawning villagers!! Handle that, too.
+                VillagerProfession p = getRandomVillagerProfession();
+                if (p != null)
+                    ((EntityVillager)creature).setProfession(p);
             }
             if (world.spawnEntity(creature)) {
                 spawnCount++;
-                if (Config.zombiePreventDespawn)
+                if (Config.zombiePreventDespawn && !creature.isNoDespawnRequired() && !(creature instanceof EntityVillager))
                     creature.enablePersistence();
                 Village v = getVillage();
                 if (v != null) {
@@ -313,14 +319,14 @@ public abstract class SiegeAIBase {
                     // Setup homing AI if not present, so it will move towards the village.
                     // Zombies already have it, so don't check for them.
                     if (!(creature instanceof EntityZombie)) {
-                        boolean needsHoming = true;
+                        boolean needsHomingAI = true;
                         for (EntityAITasks.EntityAITaskEntry e : creature.tasks.taskEntries) {
                             if (e.action instanceof EntityAIMoveTowardsRestriction) {
-                                needsHoming = false;
+                                needsHomingAI = false;
                                 break;
                             }
                         }
-                        if (needsHoming)
+                        if (needsHomingAI)
                             creature.tasks.addTask(5, new EntityAIMoveTowardsRestriction(creature, 1.0D));
                     }
                 }
@@ -335,9 +341,13 @@ public abstract class SiegeAIBase {
                 return true;
             }
         } catch (Exception ex) {
-            if (!exceptFlag) {
-                exceptFlag = true;
-                MicSiegeMod.LOG.error("Failed to spawn siege mob", ex);
+            String msg = "Failed to spawn siege entity: " + creature.getClass();
+            if (spawnFailFlag) {
+                MicSiegeMod.LOG.error(msg);
+            } else {
+                // Log stack trace only once to prevent log spamming.
+                MicSiegeMod.LOG.error(msg, ex);
+                spawnFailFlag = true;
             }
         }
         return false;

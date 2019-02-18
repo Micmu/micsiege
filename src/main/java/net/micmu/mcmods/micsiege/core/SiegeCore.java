@@ -27,7 +27,6 @@ public class SiegeCore {
     private final Set<Class<? extends SiegeAIBase>> siegeClasses = new HashSet<>(4);
     private boolean exceptionDumped = false;
     private Field injectField = null;
-    //private SpawnableEntity[] mobsToSpawn = null;
 
     /**
      *
@@ -44,49 +43,6 @@ public class SiegeCore {
         // The default siege... only 1 so far.
         registerSiege(SiegeZombies.class);
     }
-
-    /**
-     *
-     */
-    public void reloadConfig() {
-        //this.mobsToSpawn = null;
-    }
-
-    /*
-    @SuppressWarnings("unchecked")
-    private void initializeMobs() {
-        final List<SpawnableEntity> lst = new ArrayList<>();
-        String[] n = Config.additionalCustomMobs;
-        if (n != null) {
-            final IForgeRegistry<EntityEntry> reg = ForgeRegistries.ENTITIES;
-            EntityEntry e;
-            ResourceLocation loc;
-            Class<? extends Entity> en;
-            int i;
-            for (String s : n) {
-                try {
-                    if ((s == null) || s.isEmpty())
-                        continue;
-                    i = s.lastIndexOf('/');
-                    loc = new ResourceLocation(s);
-                    e = reg.getValue(loc);
-                    en = (e != null) ? e.getEntityClass() : null;
-                    if (en == null) {
-                        MicSiegeMod.LOG.error("Failed to setup custom siege mob \"" + s + "\" specified in configuration." + " No entity with such resource location found.");
-                        continue;
-                    } else if (!EntityCreature.class.isAssignableFrom(en)) {
-                        MicSiegeMod.LOG.error("Failed to setup custom siege mob \"" + s + "\" specified in configuration." + " Entity is not a subclass of EntityCreature.");
-                        continue;
-                    }
-                    e.getEntityClass();
-                } catch (Exception ee) {
-                    MicSiegeMod.LOG.error("Failed to setup custom siege mob \"" + s + "\" specified in configuration.", ee);
-                }
-            }
-        }
-        this.extraMobClasses = (Class<? extends EntityCreature>[])lst.toArray(new Class[lst.size()]);
-    }
-    */
 
     /**
      *

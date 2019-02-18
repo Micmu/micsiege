@@ -46,6 +46,4 @@ public class Config {
     @Comment("Chance for a Zombie Villager to spawn instead of a regular one (percentage).\nValue for vanilla sieges is 0.")
     @RangeInt(min = 0, max = 100)
     public static int zombieVillagerChance = 5;
-
-    // public static String[] additionalCustomMobs = new String[0];
 }
